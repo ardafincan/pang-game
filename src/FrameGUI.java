@@ -3,23 +3,22 @@ package src;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
+import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
+import javax.swing.SwingConstants;
 
-public class FrameGUI extends JFrame {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class FrameGUI extends JFrame{
     public FrameGUI(){
         super("PANG");
     }
@@ -55,15 +54,27 @@ public class FrameGUI extends JFrame {
 
         JButton startButton = new JButton("Start Game");
         startButton.setPreferredSize(new Dimension(120, 50));
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                remove(startButton);
+                setLayout(new BorderLayout(0, 0));
+
+                GameGUI gameScreen = new GameGUI();
+
+                add(gameScreen, BorderLayout.CENTER);
+
+                revalidate();
+                repaint();
+            }
+        });
 
         this.add(startButton, new GridBagConstraints());
         this.setBackground(Color.BLACK);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(384 * Main.ratioConsotant, 208 * Main.ratioConsotant));
+        this.setPreferredSize(new Dimension(384 * Main.ratioConsotant, 270 * Main.ratioConsotant));
         this.pack();
         this.setVisible(true);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
     }
-
 }

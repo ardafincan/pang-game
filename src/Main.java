@@ -6,5 +6,6 @@ public class Main {
         FrameGUI gameFrame = new FrameGUI();
 
         gameFrame.showFrame();
+
     }
 }

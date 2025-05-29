@@ -72,7 +72,7 @@ public class FrameGUI extends JFrame{
         this.add(startButton, new GridBagConstraints());
         this.setBackground(Color.BLACK);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(384 * Main.ratioConsotant, 270 * Main.ratioConsotant));
+        this.setPreferredSize(new Dimension(384 * Main.ratioConsotant, 260 * Main.ratioConsotant));
         this.pack();
         this.setVisible(true);
         this.setResizable(false);

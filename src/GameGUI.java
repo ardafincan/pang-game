@@ -40,7 +40,7 @@ public class GameGUI extends JPanel{
     private class FooterMenu extends JPanel {
         // setting two JPanel to use them as container for different JLabels
         private JPanel upperPanel = new JPanel(); 
-        private JPanel bottomPanel = new JPanel();
+        private JPanel bottomPanel = new JPanel();  
 
         // creating labels
         private JLabel usernameLabel = new JLabel("PLAYER 1", JLabel.CENTER);
@@ -55,22 +55,6 @@ public class GameGUI extends JPanel{
 
             setLayout(new BorderLayout());
 
-            // below code block is for setting fonts of labels as custom font
-            try {
-                Font retroFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/PressStart2P-Regular.ttf"))
-                                    .deriveFont(Font.PLAIN, 23);
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(retroFont);
-                usernameLabel.setFont(retroFont);
-                episodeLabel.setFont(retroFont);
-                scoreLabel.setFont(retroFont);
-                healthLabel.setFont(retroFont);
-                highScoreLabel.setFont(retroFont);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            // end of font setting
-
             usernameLabel.setForeground(Color.WHITE);
             usernameLabel.setPreferredSize(new Dimension(384, HEIGHT));
             episodeLabel.setForeground(Color.WHITE);
@@ -78,6 +62,12 @@ public class GameGUI extends JPanel{
             scoreLabel.setPreferredSize(new Dimension(384, HEIGHT));
             healthLabel.setForeground(Color.WHITE);
             highScoreLabel.setForeground(Color.WHITE);
+
+            usernameLabel.setFont(assetBank.getRetroFont());
+            episodeLabel.setFont(assetBank.getRetroFont());
+            scoreLabel.setFont(assetBank.getRetroFont());
+            healthLabel.setFont(assetBank.getRetroFont());
+            highScoreLabel.setFont(assetBank.getRetroFont());
 
             upperPanel.setLayout(new BorderLayout());
             upperPanel.setBackground(Color.BLACK);
@@ -97,14 +87,8 @@ public class GameGUI extends JPanel{
     }
 
     private class BackgroundPanel extends JPanel{
-        private BufferedImage background;
 
         public BackgroundPanel() {
-            try{
-                background = ImageIO.read(getClass().getResource("../assets/selectedBG.png"));
-            }catch(IOException ioException){
-                background = null;
-            }
             setOpaque(false);
         }
 
@@ -112,13 +96,13 @@ public class GameGUI extends JPanel{
         protected void paintComponent(Graphics g){
             super.paintComponent(g);
 
-            g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
+            g.drawImage(assetBank.getBackgroundImage(), 0, 0, getWidth(), getHeight(), null);
         }
 
         @Override
         public java.awt.Dimension getPreferredSize() {
-            if (background != null) {
-                return new java.awt.Dimension(background.getWidth() * Main.ratioConsotant, background.getHeight() * Main.ratioConsotant);
+            if (assetBank.getBackgroundImage() != null) {
+                return new java.awt.Dimension(assetBank.getBackgroundImage().getWidth() * Main.ratioConsotant, assetBank.getBackgroundImage().getHeight() * Main.ratioConsotant);
             }
             return new java.awt.Dimension(800, 600); // Default size if image is null
         }

@@ -5,26 +5,26 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.SwingConstants;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// this class is the main frame of program
+
 public class FrameGUI extends JFrame{
     public FrameGUI(){
-        super("PANG");
+        super("PANG"); // constructor creates a frame with title PANG
     }
 
     public void showFrame(){
-        JMenuBar menuBar = new JMenuBar();
+        // below is for the upper menu bar 
+        JMenuBar menuBar = new JMenuBar(); 
         JMenu menuGame = new JMenu("Game");
         JMenu menuOption = new JMenu("Options");
         JMenu menuHelp = new JMenu("Help");
@@ -50,12 +50,13 @@ public class FrameGUI extends JFrame{
 
         this.setJMenuBar(menuBar);
         
-        this.setLayout(new GridBagLayout());
+        this.setLayout(new GridBagLayout()); // setting GridBagLayout in order to put start button to center of frame without occupating every blank space
 
         JButton startButton = new JButton("Start Game");
         startButton.setPreferredSize(new Dimension(120, 50));
-        startButton.addActionListener(new ActionListener() {
+        startButton.addActionListener(new ActionListener() { // adding an action listener to listen if user clicked start
             public void actionPerformed(ActionEvent e){
+                // remove button and show game screen if button is clicked
                 remove(startButton);
                 setLayout(new BorderLayout(0, 0));
 
@@ -63,8 +64,8 @@ public class FrameGUI extends JFrame{
 
                 add(gameScreen, BorderLayout.CENTER);
 
-                revalidate();
-                repaint();
+                revalidate(); // checking if everything is still alright
+                repaint(); // update screen to show new form of screen
             }
         });
 

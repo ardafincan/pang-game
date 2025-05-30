@@ -3,6 +3,7 @@ package src;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -62,7 +63,7 @@ public class GameGUI extends JPanel{
             setLayout(new BorderLayout());
 
             livesContainer.setPreferredSize(new Dimension(382, HEIGHT));
-            livesPanel.setLayout(new BorderLayout());
+            livesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 15));
             livesContainer.setLayout(new BorderLayout());
 
             dummyLabel.setPreferredSize(new Dimension(384,HEIGHT));
@@ -82,14 +83,14 @@ public class GameGUI extends JPanel{
             upperPanel.setBackground(Color.BLACK);
             bottomPanel.setLayout(new BorderLayout());
             bottomPanel.setBackground(Color.BLACK);
-            livesPanel.setBackground(Color.RED);
+            livesPanel.setBackground(Color.BLACK);
             
 
             livesPanel.add(liveIcon1, BorderLayout.WEST);
             livesPanel.add(liveIcon2, BorderLayout.CENTER);
             livesPanel.add(liveIcon3, BorderLayout.EAST);
             livesPanel.setPreferredSize(new Dimension(170, 50));
-            livesContainer.add(livesPanel, BorderLayout.NORTH);
+            livesContainer.add(livesPanel, BorderLayout.CENTER);
 
             upperPanel.add(usernameLabel, BorderLayout.WEST);
             upperPanel.add(episodeLabel, BorderLayout.CENTER);

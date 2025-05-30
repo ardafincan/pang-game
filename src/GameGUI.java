@@ -5,14 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.HeadlessException;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 // this class is the game screen the real thing is going on here 
 
@@ -28,19 +25,18 @@ public class GameGUI extends JPanel{
         setBackground(Color.BLACK);
     }
 
-   
-
-    public void showGameScreenAt(JFrame frame){
-        frame.add(this);
-    }
-
     private class FooterMenu extends JPanel {
         // setting two JPanel to use them as container for different JLabels
         private JPanel upperPanel = new JPanel(); 
         private JPanel bottomPanel = new JPanel();  
 
-        private JPanel livesContainer = new JPanel();
-        private JPanel livesPanel = new JPanel();
+        // setting up these extra panels to manage layout as I want
+        private JPanel livesContainer = new JPanel(); // this will be in bottomPanel
+        private JPanel livesPanel = new JPanel(); // this lives in livesContainer
+
+        // setting icon00 to playerLive.png to show remaining lives of player
+        Image liveIcon = new ImageIcon("assets/playerLive.png").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+        ImageIcon icon00 = new ImageIcon(liveIcon); // this will be icon of three discrete labels to show lives
 
         // creating labels
         private JLabel usernameLabel = new JLabel("PLAYER 1", JLabel.CENTER);
@@ -49,49 +45,64 @@ public class GameGUI extends JPanel{
         private JLabel highScoreLabel = new JLabel("HI: 2100", JLabel.CENTER);
         private JLabel dummyLabel = new JLabel();
 
-        Image liveIcon = new ImageIcon("assets/playerLive.png").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-        ImageIcon icon00 = new ImageIcon(liveIcon);
-
+        // below three are used for showing remaining lives
         private JLabel liveIcon1 = new JLabel(icon00);
         private JLabel liveIcon2 = new JLabel(icon00);
         private JLabel liveIcon3 = new JLabel(icon00);
 
+        // this is constructor
         public FooterMenu (){
             super();
             setOpaque(false);
 
+            // setting layout to BorderLayout because I want something like below
+            //  PLAYER      ATHENS      SCORE: 
+            //
+            //  * * *       HI:
             setLayout(new BorderLayout());
-
-            livesContainer.setPreferredSize(new Dimension(382, HEIGHT));
+            
             livesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 15));
             livesContainer.setLayout(new BorderLayout());
 
-            dummyLabel.setPreferredSize(new Dimension(384,HEIGHT));
+            // setting sizes of below items 
+            /*
+             * ! these are all either east or west in BorderLayout because centers are invading as much space as they can
+             * ! and I need to specify widths of these components so all components widths are equal.
+             */
+            livesContainer.setPreferredSize(new Dimension(384, HEIGHT)); // bottom left (container for live icons)
+            dummyLabel.setPreferredSize(new Dimension(384,HEIGHT)); // bottom right (dummy label to make highscoreLabel aligned at center of frame)
+            usernameLabel.setPreferredSize(new Dimension(384, HEIGHT)); // upper left (user name)
+            scoreLabel.setPreferredSize(new Dimension(384, HEIGHT)); // upper right (score)
+
+            // setting text colors of text labels
             usernameLabel.setForeground(Color.WHITE);
-            usernameLabel.setPreferredSize(new Dimension(384, HEIGHT));
             scoreLabel.setForeground(Color.WHITE);
-            scoreLabel.setPreferredSize(new Dimension(384, HEIGHT));
             highScoreLabel.setForeground(Color.WHITE);
             episodeLabel.setForeground(Color.WHITE);
 
+            // setting fonts of text labels
             usernameLabel.setFont(assetBank.getRetroFont());
             episodeLabel.setFont(assetBank.getRetroFont());
             scoreLabel.setFont(assetBank.getRetroFont());
             highScoreLabel.setFont(assetBank.getRetroFont());
 
-            upperPanel.setLayout(new BorderLayout());
+            // setting backgrounds of panels to black 
             upperPanel.setBackground(Color.BLACK);
-            bottomPanel.setLayout(new BorderLayout());
             bottomPanel.setBackground(Color.BLACK);
             livesPanel.setBackground(Color.BLACK);
             
+            // setting layouts of two sub-components of FooterMenu
+            upperPanel.setLayout(new BorderLayout());
+            bottomPanel.setLayout(new BorderLayout());
 
+            // adding icons to livesPanel and then adding it to livesContainer
             livesPanel.add(liveIcon1, BorderLayout.WEST);
             livesPanel.add(liveIcon2, BorderLayout.CENTER);
             livesPanel.add(liveIcon3, BorderLayout.EAST);
             livesPanel.setPreferredSize(new Dimension(170, 50));
             livesContainer.add(livesPanel, BorderLayout.CENTER);
 
+            // adding sub-components to upper and bottom panels
             upperPanel.add(usernameLabel, BorderLayout.WEST);
             upperPanel.add(episodeLabel, BorderLayout.CENTER);
             upperPanel.add(scoreLabel, BorderLayout.EAST);
@@ -99,19 +110,23 @@ public class GameGUI extends JPanel{
             bottomPanel.add(livesContainer, BorderLayout.WEST);
             bottomPanel.add(highScoreLabel, BorderLayout.CENTER);
             bottomPanel.add(dummyLabel, BorderLayout.EAST);
-            bottomPanel.setPreferredSize(new Dimension(WIDTH, getHeight() * 3));
+            bottomPanel.setPreferredSize(new Dimension(WIDTH, getHeight() * 3)); // setting this higher than normal because I don't want it at full south
 
+            // finally adding upper and bottom panels to FooterMenu
             add(upperPanel, BorderLayout.NORTH);
             add(bottomPanel, BorderLayout.CENTER);
         }
     }
 
-    private class BackgroundPanel extends JPanel{
 
+    // below class is for the game background, I am adding this to gameGUI
+    private class BackgroundPanel extends JPanel{
+        // setting this to transparent to show image
         public BackgroundPanel() {
             setOpaque(false);
         }
 
+        // overriding paint component to paint background image
         @Override
         protected void paintComponent(Graphics g){
             super.paintComponent(g);
@@ -119,12 +134,13 @@ public class GameGUI extends JPanel{
             g.drawImage(assetBank.getBackgroundImage(), 0, 0, getWidth(), getHeight(), null);
         }
 
+        // overriding getPrefferedSize to set size true
         @Override
         public java.awt.Dimension getPreferredSize() {
             if (assetBank.getBackgroundImage() != null) {
                 return new java.awt.Dimension(assetBank.getBackgroundImage().getWidth() * Main.ratioConsotant, assetBank.getBackgroundImage().getHeight() * Main.ratioConsotant);
             }
-            return new java.awt.Dimension(800, 600); // Default size if image is null
+            return new java.awt.Dimension(800, 600); 
         }
     }
 }

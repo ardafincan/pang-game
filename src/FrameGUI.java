@@ -69,6 +69,7 @@ public class FrameGUI extends JFrame{
             }
         });
 
+        // below is the final constraints of JFrame
         this.add(startButton, new GridBagConstraints());
         this.setBackground(Color.BLACK);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

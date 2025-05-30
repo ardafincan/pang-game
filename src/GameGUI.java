@@ -3,15 +3,12 @@ package src;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,12 +39,22 @@ public class GameGUI extends JPanel{
         private JPanel upperPanel = new JPanel(); 
         private JPanel bottomPanel = new JPanel();  
 
+        private JPanel livesContainer = new JPanel();
+        private JPanel livesPanel = new JPanel();
+
         // creating labels
         private JLabel usernameLabel = new JLabel("PLAYER 1", JLabel.CENTER);
         private JLabel episodeLabel = new JLabel("ATHENS", JLabel.CENTER);
         private JLabel scoreLabel = new JLabel("SCORE: 1000", JLabel.CENTER);
-        private JLabel healthLabel = new JLabel("3", JLabel.CENTER);
         private JLabel highScoreLabel = new JLabel("HI: 2100", JLabel.CENTER);
+        private JLabel dummyLabel = new JLabel();
+
+        Image liveIcon = new ImageIcon("assets/playerLive.png").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+        ImageIcon icon00 = new ImageIcon(liveIcon);
+
+        private JLabel liveIcon1 = new JLabel(icon00);
+        private JLabel liveIcon2 = new JLabel(icon00);
+        private JLabel liveIcon3 = new JLabel(icon00);
 
         public FooterMenu (){
             super();
@@ -55,34 +62,47 @@ public class GameGUI extends JPanel{
 
             setLayout(new BorderLayout());
 
+            livesContainer.setPreferredSize(new Dimension(382, HEIGHT));
+            livesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 15));
+            livesContainer.setLayout(new BorderLayout());
+
+            dummyLabel.setPreferredSize(new Dimension(384,HEIGHT));
             usernameLabel.setForeground(Color.WHITE);
             usernameLabel.setPreferredSize(new Dimension(384, HEIGHT));
-            episodeLabel.setForeground(Color.WHITE);
             scoreLabel.setForeground(Color.WHITE);
             scoreLabel.setPreferredSize(new Dimension(384, HEIGHT));
-            healthLabel.setForeground(Color.WHITE);
             highScoreLabel.setForeground(Color.WHITE);
+            episodeLabel.setForeground(Color.WHITE);
 
             usernameLabel.setFont(assetBank.getRetroFont());
             episodeLabel.setFont(assetBank.getRetroFont());
             scoreLabel.setFont(assetBank.getRetroFont());
-            healthLabel.setFont(assetBank.getRetroFont());
             highScoreLabel.setFont(assetBank.getRetroFont());
 
             upperPanel.setLayout(new BorderLayout());
             upperPanel.setBackground(Color.BLACK);
             bottomPanel.setLayout(new BorderLayout());
             bottomPanel.setBackground(Color.BLACK);
+            livesPanel.setBackground(Color.BLACK);
+            
+
+            livesPanel.add(liveIcon1, BorderLayout.WEST);
+            livesPanel.add(liveIcon2, BorderLayout.CENTER);
+            livesPanel.add(liveIcon3, BorderLayout.EAST);
+            livesPanel.setPreferredSize(new Dimension(170, 50));
+            livesContainer.add(livesPanel, BorderLayout.CENTER);
 
             upperPanel.add(usernameLabel, BorderLayout.WEST);
             upperPanel.add(episodeLabel, BorderLayout.CENTER);
             upperPanel.add(scoreLabel, BorderLayout.EAST);
 
-            bottomPanel.add(healthLabel, BorderLayout.WEST);
+            bottomPanel.add(livesContainer, BorderLayout.WEST);
             bottomPanel.add(highScoreLabel, BorderLayout.CENTER);
+            bottomPanel.add(dummyLabel, BorderLayout.EAST);
+            bottomPanel.setPreferredSize(new Dimension(WIDTH, getHeight() * 3));
 
             add(upperPanel, BorderLayout.NORTH);
-            add(bottomPanel, BorderLayout.SOUTH);
+            add(bottomPanel, BorderLayout.CENTER);
         }
     }
 

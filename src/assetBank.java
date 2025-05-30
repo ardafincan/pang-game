@@ -9,13 +9,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class assetBank {
-    public static BufferedImage liveIcon;
+    public static BufferedImage getLiveIcon()
         {
             try {
-                liveIcon = ImageIO.read(new File("../assets/playerLive.png"));
+                return ImageIO.read(new File("../assets/playerLive.png"));
             } catch (IOException e) {
                 e.printStackTrace();
-                liveIcon = null;
+                return null;
             }
         }
 

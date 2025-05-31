@@ -8,7 +8,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class assetBank {
+// this is where I keep the assets, just to make code more readable
+public class AssetBank {
     public static BufferedImage getLiveIcon()
         {
             try {
@@ -35,9 +36,29 @@ public class assetBank {
     
     public static BufferedImage getBackgroundImage(){
         try{
-                return ImageIO.read(assetBank.class.getResource("../assets/selectedBG.png"));
+                return ImageIO.read(AssetBank.class.getResource("../assets/selectedBG.png"));
             }catch(IOException ioException){
                 return null;
             }
+    }
+
+    public static BufferedImage[] getCharacterImages(){
+        BufferedImage characterArray[] = new BufferedImage[5];
+
+        try{
+            for (int i = 0; i < 6; i++){
+                if (i == 0){
+                    characterArray[0] = ImageIO.read(AssetBank.class.getResource("assets/playerStanding.png"));
+                }else{
+                    BufferedImage chWalk = ImageIO.read(AssetBank.class.getResource(String.format("assets/playerWalking0%d.png", i)));
+
+                    characterArray[i - 1] = chWalk; 
+                }
+            }
+        }catch(IOException ioException){
+            ioException.printStackTrace();
+        }
+
+        return characterArray;
     }
 }

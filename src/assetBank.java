@@ -5,6 +5,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
@@ -43,16 +44,16 @@ public class AssetBank {
     }
 
     public static BufferedImage[] getCharacterImages(){
-        BufferedImage characterArray[] = new BufferedImage[5];
+        BufferedImage characterArray[] = new BufferedImage[6];
 
         try{
             for (int i = 0; i < 6; i++){
                 if (i == 0){
-                    characterArray[0] = ImageIO.read(AssetBank.class.getResource("assets/playerStanding.png"));
+                    characterArray[0] = ImageIO.read(AssetBank.class.getResource("../assets/playerStanding.png"));
                 }else{
-                    BufferedImage chWalk = ImageIO.read(AssetBank.class.getResource(String.format("assets/playerWalking0%d.png", i)));
+                    BufferedImage chWalk = ImageIO.read(AssetBank.class.getResource(String.format("../assets/playerWalking0%d.png", i)));
 
-                    characterArray[i - 1] = chWalk; 
+                    characterArray[i] = chWalk; 
                 }
             }
         }catch(IOException ioException){
@@ -60,5 +61,13 @@ public class AssetBank {
         }
 
         return characterArray;
+    }
+
+    public static BufferedImage getForegroundImage(){
+        try{
+            return ImageIO.read(AssetBank.class.getResource("../assets/selectedFG.png"));
+        }catch(IOException ioException){
+            return null;
+        }
     }
 }

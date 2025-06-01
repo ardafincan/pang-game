@@ -24,6 +24,8 @@ public class GameGUI extends JPanel{
         // setting this to transparent to show image
         public BackgroundPanel() {
             setOpaque(false);
+            setLayout(new BorderLayout());
+            add(new CharacterGUI(), BorderLayout.NORTH);
         }
 
         // overriding paint component to paint background image

@@ -43,6 +43,14 @@ public class AssetBank {
             }
     }
 
+    public static BufferedImage getForegroundImage(){
+        try{
+            return ImageIO.read(AssetBank.class.getResource("../assets/selectedFG.png"));
+        }catch(IOException ioException){
+            return null;
+        }
+    }
+
     public static BufferedImage[] getCharacterImages(){
         BufferedImage characterArray[] = new BufferedImage[6];
 
@@ -63,11 +71,20 @@ public class AssetBank {
         return characterArray;
     }
 
-    public static BufferedImage getForegroundImage(){
+    public static BufferedImage[] getWeaponImages(){
+        BufferedImage weaponArray[] = new BufferedImage[72];
+
         try{
-            return ImageIO.read(AssetBank.class.getResource("../assets/selectedFG.png"));
+            for (int i = 0; i < 72; i++){
+                BufferedImage weapon = ImageIO.read(AssetBank.class.getResource(String.format("../assets/frame_0%d.png", i)));
+
+                weaponArray[i] = weapon;
+            }
         }catch(IOException ioException){
-            return null;
+            ioException.printStackTrace();
         }
+
+        return weaponArray;
     }
+
 }

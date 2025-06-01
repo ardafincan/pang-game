@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +35,20 @@ public class FrameGUI extends JFrame{
         JMenuItem historyItem = new JMenuItem("History");
         JMenuItem hScoreItem = new JMenuItem("High Score");
         JMenuItem aboutItem = new JMenuItem("About");
+
+        // adding actionListener to quit button
+        quitItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                System.exit(ABORT);
+            }
+        });
+
+        // adding actionListener to about button
+        aboutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                JOptionPane.showMessageDialog(null, String.format("Ali Arda Fincan\n20230702099\nardafincan@icloud.com"), "About", JOptionPane.DEFAULT_OPTION);
+            }
+        });
 
         menuBar.add(menuGame);
         menuBar.add(menuOption);

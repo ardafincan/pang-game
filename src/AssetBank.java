@@ -58,7 +58,8 @@ public class AssetBank {
             for (int i = 0; i < 6; i++){
                 if (i == 0){
                     characterArray[0] = ImageIO.read(AssetBank.class.getResource("../assets/playerStanding.png"));
-                }else{
+                }
+                else{
                     BufferedImage chWalk = ImageIO.read(AssetBank.class.getResource(String.format("../assets/playerWalking0%d.png", i)));
 
                     characterArray[i] = chWalk; 
@@ -71,12 +72,12 @@ public class AssetBank {
         return characterArray;
     }
 
-    public static BufferedImage[] getWeaponImages(){
+    public static BufferedImage[] getArrowImages(){
         BufferedImage weaponArray[] = new BufferedImage[72];
 
         try{
             for (int i = 0; i < 72; i++){
-                BufferedImage weapon = ImageIO.read(AssetBank.class.getResource(String.format("../assets/frame_0%d.png", i)));
+                BufferedImage weapon = ImageIO.read(AssetBank.class.getResource(String.format("../assets/frame_0%02d.png", i)));
 
                 weaponArray[i] = weapon;
             }

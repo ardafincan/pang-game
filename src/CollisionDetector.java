@@ -27,7 +27,7 @@ public class CollisionDetector {
             }
         }
         // also checking if point colliding with game boundaries
-        if (x <= screenBounds.x || x >= (screenBounds.x + screenBounds.width) || y <= screenBounds.y || y >= (screenBounds.y + screenBounds.height)){
+        if (x <= screenBounds.x && x >= (screenBounds.x + screenBounds.width) && y <= screenBounds.y && y >= (screenBounds.y + screenBounds.height)){
             return true;
         }
         return false; // if none of above is true then return false 

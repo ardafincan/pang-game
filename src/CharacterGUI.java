@@ -3,6 +3,7 @@ package src;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -26,6 +27,7 @@ public class CharacterGUI extends JPanel implements Runnable {
     private volatile boolean movingRight = false; // I explained at above line
     private volatile boolean shooting = false;
 
+    private CollisionDetector cDetector = new CollisionDetector();
     private Thread movementThread; // declaring the thread for handling character movement
 
     // below is the constructor of CharacterGUI
@@ -91,13 +93,19 @@ public class CharacterGUI extends JPanel implements Runnable {
         currentChFrame = ((currentChFrame + 1) % totalChFrames) == 0 ? currentChFrame + 1 : (currentChFrame + 1) % totalChFrames; // if frame is 0 (idle) make it 1 when cycling animation
     }
 
-    public void cycleShootAnimation(){
-        if(currentArrowFrame == 0 || currentArrowFrame == 2){
+    public void cycleShootAnimation(Rectangle rect){
+        if(currentArrowFrame == 0 || currentArrowFrame == 2){ // this is for character staying at shooting appearance for 2 frames
             currentChFrame = 6;
         }else if(!movingLeft && !movingRight){
             currentChFrame = 0;
         }
         if(currentArrowFrame != 70){
+            // check if colliding here if not continue and if colliding do the same thing as else block below
+            if(cDetector.isRectCollidingWithWalls(rect)){
+                shooting = false;
+                currentArrowFrame = 0;
+                return;
+            }
             currentArrowFrame += 2;
             if(currentArrowFrame == 23 || currentArrowFrame == 47){
                 currentArrowFrame++;
@@ -124,7 +132,16 @@ public class CharacterGUI extends JPanel implements Runnable {
                 cycleCharacterAnimation();
             }
             if(shooting){
-                cycleShootAnimation();
+                int characterWidth = AssetBank.getCharacterImages()[currentChFrame].getWidth() * 3; // taking width and heights of character to draw 
+                int characterHeight = AssetBank.getCharacterImages()[currentChFrame].getHeight() * 3;
+
+                int arrowWidth = AssetBank.getArrowImages()[currentArrowFrame].getWidth() * 3;
+                int arrowHeight = AssetBank.getArrowImages()[currentArrowFrame].getHeight() * 3;
+                
+                shootedX = currentArrowFrame == 0 ? characterX : shootedX;
+
+                Rectangle rect = new Rectangle(shootedX + (characterWidth/2), characterY - arrowHeight + characterHeight, arrowWidth, arrowHeight);
+                cycleShootAnimation(rect);
             }
             SwingUtilities.invokeLater(() -> repaint()); //  this is a bit long to explain but if I got it right it is something like: OK, the job of this thread is done and we have to tell swing to repaint but it is on edt so it tells edt to repaint.
             try{

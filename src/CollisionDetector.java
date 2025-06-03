@@ -43,22 +43,22 @@ public class CollisionDetector {
         // checking each border (top-bottom-left-right)
         for(int i = 0; i < width; i++){ // checking top side
             Point tempPoint = new Point((x + i), y);
-            return isPointCollidingWithWalls(tempPoint);
+            if (isPointCollidingWithWalls(tempPoint)) return true;
         }
         
         for(int i = 0; i < width; i++){ // checking bottom side
             Point tempPoint = new Point((x + i), (y + height));
-            return isPointCollidingWithWalls(tempPoint);
+            if (isPointCollidingWithWalls(tempPoint)) return true;
         }
 
         for(int i = 0; i < height; i++){ // checking left side
             Point tempPoint = new Point(x, (y + i));
-            return isPointCollidingWithWalls(tempPoint);
+            if (isPointCollidingWithWalls(tempPoint)) return true;
         }
 
         for(int i = 0; i < height; i++){ // checking right side
             Point tempPoint = new Point((x + width), (y + i));
-            return isPointCollidingWithWalls(tempPoint);
+            if (isPointCollidingWithWalls(tempPoint)) return true;
         }
 
         return false;

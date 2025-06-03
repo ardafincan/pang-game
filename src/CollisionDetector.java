@@ -7,10 +7,10 @@ import java.util.ArrayList;
 // this class is going to be used detecting collisions
 public class CollisionDetector {
     // setting walls 
-    private Wall wall1 = new Wall(184, 48, 16, 40); 
-    private Wall wall2 = new Wall(184, 128, 16, 40);
-    private Wall wall3 = new Wall(64, 96, 64, 16);
-    private Wall wall4 = new Wall(256, 96, 64, 16);
+    private Wall wall1 = new Wall(184 * 3, 48 * 3, 16 * 3, 40 * 3); 
+    private Wall wall2 = new Wall(184 * 3, 128 * 3, 16 * 3, 40 * 3);
+    private Wall wall3 = new Wall(64 * 3, 96 * 3, 64 * 3, 16 * 3);
+    private Wall wall4 = new Wall(256 * 3, 96 * 3, 64 * 3, 16 * 3);
 
     private Wall screenBounds = new Wall(8, 8, 368, 192);
 

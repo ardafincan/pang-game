@@ -1,11 +1,9 @@
 package src;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -94,6 +92,11 @@ public class CharacterGUI extends JPanel implements Runnable {
     }
 
     public void cycleShootAnimation(){
+        if(currentArrowFrame == 0 || currentArrowFrame == 2){
+            currentChFrame = 6;
+        }else if(!movingLeft && !movingRight){
+            currentChFrame = 0;
+        }
         if(currentArrowFrame != 70){
             currentArrowFrame += 2;
             if(currentArrowFrame == 23 || currentArrowFrame == 47){
@@ -156,7 +159,15 @@ public class CharacterGUI extends JPanel implements Runnable {
         }else{
              g.drawImage(AssetBank.getCharacterImages()[currentChFrame], characterX, characterY, characterWidth, characterHeight, null);
         }
-
-        
+        // g.setColor(Color.MAGENTA);
+        // //Rectangle wall = new Rectangle(184 * 3, 48 * 3, 16 * 3, 40 * 3);
+        // g.drawRect(184 * 3, 48 * 3, 16 * 3, 40 * 3);
+        // g.drawRect(184 * 3, 128 * 3, 16 * 3, 40 * 3);
+        // g.drawRect(64 * 3, 96 * 3, 64 * 3, 16 * 3);
+        // g.drawRect((128 + 128) * 3, 96 * 3, 64 * 3, 16 * 3);
+        // g.drawRect(8 * 3, 8 * 3, 368 * 3, 192 * 3);
+        // //g.fillRect(characterWidth, characterHeight, arrowWidth, arrowHeight);
+        // // BELOW WILL BE DELETED BEFORE COMPILE
+        // g.drawArc(arrowHeight, arrowHeight, characterWidth, characterHeight, arrowWidth, arrowHeight); // THIS WILL BE DELETED BEFORE COMPILE 
     }
 }

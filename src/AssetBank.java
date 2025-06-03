@@ -52,7 +52,7 @@ public class AssetBank {
     }
 
     public static BufferedImage[] getCharacterImages(){
-        BufferedImage characterArray[] = new BufferedImage[6];
+        BufferedImage characterArray[] = new BufferedImage[7];
 
         try{
             for (int i = 0; i < 6; i++){
@@ -65,6 +65,7 @@ public class AssetBank {
                     characterArray[i] = chWalk; 
                 }
             }
+            characterArray[6] = ImageIO.read(AssetBank.class.getResource("../assets/playerShooting.png"));
         }catch(IOException ioException){
             ioException.printStackTrace();
         }

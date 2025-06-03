@@ -89,4 +89,18 @@ public class AssetBank {
         return weaponArray;
     }
 
+    public static BufferedImage[] getBubbleImages(){
+        BufferedImage bubbleArray[] = new BufferedImage[4];
+
+        try {
+            bubbleArray[0] = ImageIO.read(AssetBank.class.getResource("../assets/selectedBaloonXL.png"));
+            bubbleArray[1] = ImageIO.read(AssetBank.class.getResource("../assets/selectedBaloonL.png"));
+            bubbleArray[2] = ImageIO.read(AssetBank.class.getResource("../assets/selectedBaloonM.png"));
+            bubbleArray[3] = ImageIO.read(AssetBank.class.getResource("../assets/selectedBaloonS.png"));
+
+        } catch (IOException ioException) {
+           ioException.printStackTrace();
+        }
+        return bubbleArray;
+    }
 }

@@ -94,23 +94,23 @@ public class CharacterGUI extends JPanel implements Runnable {
     }
 
     public void cycleShootAnimation(Rectangle rect){
-        if(currentArrowFrame == 0 || currentArrowFrame == 2){ // this is for character staying at shooting appearance for 2 frames
+        if(currentArrowFrame == 0 || currentArrowFrame == 3){ // this is for character staying at shooting appearance for 2 frames
             currentChFrame = 6;
         }else if(!movingLeft && !movingRight){
             currentChFrame = 0;
         }
-        if(currentArrowFrame != 70){
+        if(currentArrowFrame != 69){
             // check if colliding here if not continue and if colliding do the same thing as else block below
-            if(cDetector.isRectCollidingWithWalls(rect)){
+            if(cDetector.isRectCollidingWithWalls(rect)){ // if arrow collides with a wall then stop shooting
                 shooting = false;
                 currentArrowFrame = 0;
                 return;
             }
-            currentArrowFrame += 2;
-            if(currentArrowFrame == 23 || currentArrowFrame == 47){
+            currentArrowFrame += 3; // increasing 3 by 3 in order to make it faster without changing thread sleep
+            if(currentArrowFrame == 23 || currentArrowFrame == 47){ // these frames are blank
                 currentArrowFrame++;
             }
-        }else{
+        }else{ // if currentArrowFrame == 69 then stop shooting
             shooting = false;
             currentArrowFrame = 0;
         }
@@ -121,17 +121,17 @@ public class CharacterGUI extends JPanel implements Runnable {
     public void run(){
         while(true){ // always check if character should move either direction and if yes move and cycle animation
             if(movingLeft){
-                if(characterX > 25){
+                if(characterX > 25){ // checking game border
                     characterX -= 15;
                 }
-                cycleCharacterAnimation();
+                cycleCharacterAnimation(); // the animation function to make it character seem like walking
             }
             if(movingRight){
-                if(characterX < 1045)
+                if(characterX < 1045) // again checking game border
                 characterX += 15;
                 cycleCharacterAnimation();
             }
-            if(shooting){
+            if(shooting){ // if shooting then cycle shoot animation
                 int characterWidth = AssetBank.getCharacterImages()[currentChFrame].getWidth() * 3; // taking width and heights of character to draw 
                 int characterHeight = AssetBank.getCharacterImages()[currentChFrame].getHeight() * 3;
 
@@ -172,7 +172,7 @@ public class CharacterGUI extends JPanel implements Runnable {
             g.drawImage(AssetBank.getArrowImages()[currentArrowFrame], shootedX + (characterWidth/2), characterY - arrowHeight + characterHeight, arrowWidth, arrowHeight, null);
         }
         if(movingLeft || isLastLeft){ // this is checking if character is moving left or last move was towards left, if it is then we will draw him horizontally flipped
-             g.drawImage(AssetBank.getCharacterImages()[currentChFrame], characterX + characterWidth, characterY, -characterWidth, characterHeight, null); // just draw to character
+             g.drawImage(AssetBank.getCharacterImages()[currentChFrame], characterX + characterWidth, characterY, -characterWidth, characterHeight, null); // just draw the character
         }else{
              g.drawImage(AssetBank.getCharacterImages()[currentChFrame], characterX, characterY, characterWidth, characterHeight, null);
         }

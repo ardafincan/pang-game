@@ -12,7 +12,7 @@ public class CollisionDetector {
     private Wall wall3 = new Wall(64 * 3, 96 * 3, 64 * 3, 16 * 3);
     private Wall wall4 = new Wall(256 * 3, 96 * 3, 64 * 3, 16 * 3);
 
-    private Wall screenBounds = new Wall(8, 8, 368, 192);
+    private Wall screenBounds = new Wall(8 * 3, 8 * 3, 368 * 3, 192 * 3);
 
     private Wall[] walls = {wall1, wall2, wall3, wall4};
 
@@ -106,7 +106,7 @@ public class CollisionDetector {
     // this is an inner class used for defnining circles
     private class Circle{
         public int x, y, radius;
-        public int pointCount = 100; // deciding how many points going to be used when defining circle boundaries
+        public int pointCount = 360; // deciding how many points going to be used when defining circle boundaries
         public Point[] circlePoints = new Point[pointCount]; 
 
         public Circle(int x, int y, int radius){

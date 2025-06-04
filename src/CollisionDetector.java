@@ -1,20 +1,19 @@
 package src;
 
 import java.awt.Rectangle;
-import java.awt.geom.Arc2D;
-import java.util.ArrayList;
+
 
 // this class is going to be used detecting collisions
 public class CollisionDetector {
     // setting walls 
-    private Wall wall1 = new Wall(184 * 3, 48 * 3, 16 * 3, 40 * 3); 
-    private Wall wall2 = new Wall(184 * 3, 128 * 3, 16 * 3, 40 * 3);
+    //private Wall wall1 = new Wall(184 * 3, 48 * 3, 16 * 3, 40 * 3); 
+    //private Wall wall2 = new Wall(184 * 3, 128 * 3, 16 * 3, 40 * 3);
     private Wall wall3 = new Wall(64 * 3, 96 * 3, 64 * 3, 16 * 3);
     private Wall wall4 = new Wall(256 * 3, 96 * 3, 64 * 3, 16 * 3);
 
     private Wall screenBounds = new Wall(8 * 3, 8 * 3, 368 * 3, 192 * 3);
 
-    private Wall[] walls = {wall1, wall2, wall3, wall4};
+    private Wall[] walls = {wall3, wall4};
 
     // this function is checking if a point is colliding  with wall (used in other methods)
     public boolean isPointCollidingWithWalls(Point p){
@@ -73,11 +72,9 @@ public class CollisionDetector {
         // checking each point to look if they collide
         for (Point p : pts){
             if (isPointCollidingWithWalls(p)) {
-                System.out.println("collision var");
                 return true;
             }
         }
-        System.out.println("col yok");
         return false;
     }
 
@@ -139,7 +136,7 @@ public class CollisionDetector {
     }
     
     // this is an inner class used for defining walls usefully
-    private class Wall {
+    public class Wall {
         public int x, y, width, height;
 
         public Wall(int x, int y, int width, int heigth) {

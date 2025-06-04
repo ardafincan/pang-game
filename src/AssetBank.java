@@ -3,11 +3,18 @@ package src;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 // this is where I keep the assets, just to make code more readable
 public class AssetBank {
@@ -102,5 +109,23 @@ public class AssetBank {
            ioException.printStackTrace();
         }
         return bubbleArray;
+    }
+
+    public static AudioInputStream getPopEffect() throws UnsupportedAudioFileException, IOException, LineUnavailableException{
+        AudioInputStream pop_effect;
+        
+        InputStream audioSrc = CharacterGUI.class.getResourceAsStream("/assets/pop_sound.wav");
+        BufferedInputStream bufferedIn = new BufferedInputStream(audioSrc);
+        pop_effect = AudioSystem.getAudioInputStream(bufferedIn);
+        return pop_effect;
+    }
+
+    public static AudioInputStream getGameMusic() throws UnsupportedAudioFileException, IOException, LineUnavailableException{
+        AudioInputStream gameMusic;
+        
+        InputStream audioSrc = CharacterGUI.class.getResourceAsStream("/assets/game_music.wav");
+        BufferedInputStream bufferedIn = new BufferedInputStream(audioSrc);
+        gameMusic = AudioSystem.getAudioInputStream(bufferedIn);
+        return gameMusic;
     }
 }

@@ -11,7 +11,7 @@ public class Bubble {
     public static final int S = 3;
 
     public static final int[] bubble_radius = {24, 16, 8, 4};
-    public static final int[] base_speedsY = {20, 20, 20, 20};
+    public static final int[] base_speedsY = {30, 25, 23, 20};
     public boolean isActive;
 
     public int bubbleX;
@@ -19,6 +19,7 @@ public class Bubble {
     public int speedX = 30;
     public int speedY;
     public int size;
+    public int radius;
 
     public CollisionDetector cDetector = new CollisionDetector();
 
@@ -29,6 +30,7 @@ public class Bubble {
         this.speedX = (int)(5 * xSpeedMultiplier);
         this.speedY = speedY;
         this.size = size;
+        this.radius = AssetBank.getBubbleImages()[size].getWidth()/ 2;
 
         this.isActive = true; // only turn false when got hit
     }
@@ -37,7 +39,7 @@ public class Bubble {
         if (!isActive) return;
 
         // Apply gravity
-        //speedY += 1; // Add gravity acceleration
+        speedY += 1; // Add gravity acceleration
         
         bubbleX += speedX;
         bubbleY += speedY;
@@ -50,8 +52,7 @@ public class Bubble {
     }
 
     private void checkScreenBoundaries() {
-        int radius = AssetBank.getBubbleImages()[size].getWidth()/ 2;
-        
+               
         // Left boundary
         if (bubbleX <= 24) {
             bubbleX = 24 + radius;
@@ -67,13 +68,13 @@ public class Bubble {
         // Ground boundary
         if (bubbleY + radius >= 590) {
             bubbleY = 590 - radius;
-            speedY = -Math.abs(speedY); // Bounce up
+            speedY = -speedY; // Bounce up
         }
         
         // Ceiling boundary
         if (bubbleY <= 24) {
             bubbleY = 24 + radius;
-            speedY = Math.abs(speedY);
+            speedY = -speedY;
         }
     }
 
@@ -87,12 +88,12 @@ public class Bubble {
         int centerY = bubbleY + (imageHeight / 2);
         
         // Pass the center coordinates, not center + radius
-        if (cDetector.isCircleCollidingWithWalls(centerX, centerY, bubble_radius[size] * 3)){
-            speedX = -speedX;
+        if (cDetector.isCircleCollidingWithWalls(centerX, centerY, this.radius)){
+            //speedX = -speedX;
             speedY = -speedY;
             
             // Move bubble away from wall
-            bubbleX += speedX;
+            //bubbleX += speedX;
             bubbleY += speedY;
             
             return true;
@@ -122,7 +123,21 @@ public class Bubble {
         int centerX = bubbleX + (imageWidth / 2);
         int centerY = bubbleY + (imageHeight / 2);
         
-        return cDetector.isRectCollidingWithCircle(arrow, centerX, centerY, bubble_radius[size] * 3);
+        return cDetector.isRectCollidingWithCircle(arrow, centerX, centerY, this.radius);
+    }
+
+        public boolean checkCharacterCollision(Rectangle character) {
+        if (!isActive) return false;
+
+        BufferedImage[] bubbleImages = AssetBank.getBubbleImages();
+        int imageWidth = bubbleImages[size].getWidth() * 3;
+        int imageHeight = bubbleImages[size].getHeight() * 3;
+        
+        // Calculate center of the bubble image
+        int centerX = bubbleX + (imageWidth / 2);
+        int centerY = bubbleY + (imageHeight / 2);
+
+        return cDetector.isRectCollidingWithCircle(character, centerX, centerY, this.radius);
     }
 
     public Bubble[] split(){

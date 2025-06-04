@@ -8,24 +8,32 @@ import javax.swing.JPanel;
 // this class is the game screen the real thing is going on here 
 
 public class GameGUI extends JPanel{
+    int difficulty;
     
-    public GameGUI(){
+    public GameGUI(int difficulty){
         super();
 
-        BackgroundPanel bgPanel = new BackgroundPanel();
+        BackgroundPanel bgPanel = new BackgroundPanel(difficulty);
         setLayout(new BorderLayout());
         add(bgPanel, BorderLayout.NORTH);
-        add(new StatsGUI(), BorderLayout.CENTER);
+        add(new StatsGUI(difficulty), BorderLayout.CENTER);
         setBackground(Color.BLACK);
     }
 
     // below class is for the game background, I am adding this to gameGUI
     private class BackgroundPanel extends JPanel{
         // setting this to transparent to show image
-        public BackgroundPanel() {
+        public BackgroundPanel(int difficulty) {
+
             setOpaque(false);
             setLayout(new BorderLayout());
-            add(new CharacterGUI(), BorderLayout.NORTH);
+            try {
+                CharacterGUI character = new CharacterGUI(difficulty);
+                character.characterLives = 3;
+                add(character, BorderLayout.NORTH);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // overriding paint component to paint background image

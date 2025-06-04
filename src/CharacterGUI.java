@@ -1,12 +1,17 @@
 package src;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -16,13 +21,20 @@ import javax.swing.SwingUtilities;
 // this class is handling character drawing, moving and shooting
 public class CharacterGUI extends JPanel implements Runnable {
     // declaring characterX and Y to specify spawn location
+    public static boolean isWin = false;
+    public static int characterLives = 3;
+    public static int score = 0;
+
     private int characterX = 510;
     private int characterY = 504;
+    private int characterWidth = AssetBank.getCharacterImages()[0].getWidth() * 3;
+    private int characterHeight = AssetBank.getCharacterImages()[0].getHeight() * 3;
     private int shootedX = 0;
     private int currentChFrame = 0; // this is for character walking animation (0 is idle)
     private int totalChFrames = 5;  // how many frames there are in total
     private int currentArrowFrame = 0; // this is for shooting animation
 
+    private boolean isNowTouched = false;
     private boolean isLastLeft = false; // this is kept for declaring if idle state will look either left or right
     private volatile boolean movingLeft = false; // this and below are kept to move character at thread run method
     private volatile boolean movingRight = false; // I explained at above line
@@ -33,13 +45,30 @@ public class CharacterGUI extends JPanel implements Runnable {
     private CollisionDetector cDetector = new CollisionDetector();
     private Thread movementThread; // declaring the thread for handling character movement
 
+    private AudioInputStream popEffect;
+    private AudioInputStream gameMusic;
+
+    Clip musicClip = AudioSystem.getClip();
+    Clip popClip = AudioSystem.getClip();
+
     // below is the constructor of CharacterGUI
-    public CharacterGUI(){
+    public CharacterGUI(int difficulty) throws Exception {
+        // Initialize audio
+        popEffect = AssetBank.getPopEffect();
+        gameMusic = AssetBank.getGameMusic();
+        
+
+        musicClip.open(gameMusic); 
+        popClip.open(popEffect);
+
+        musicClip.setFramePosition(0);
+        musicClip.start();
+
         setOpaque(false); // setting transparent to make background transparent obviously
         setPreferredSize(new Dimension(AssetBank.getForegroundImage().getWidth() * 3, AssetBank.getForegroundImage().getHeight() * 3)); // setting preferred size according to foreground image
 
-        // Initialize bubbles
-        for (Bubble bubble : BubbleFactory.initializeBubbles(1)){
+        // create bubbles
+        for (Bubble bubble : BubbleFactory.initializeBubbles(difficulty)){
             bubbles.add(bubble);
         }
 
@@ -136,7 +165,18 @@ public class CharacterGUI extends JPanel implements Runnable {
        while (iterator.hasNext()) {
            Bubble bubble = iterator.next();
            if (bubble.isActive() && bubble.checkArrowCollision(arrowRect)) {
-               // Bubble hit! Split it
+                popClip.setFramePosition(0);
+                popClip.start();
+            
+               if(bubble.size == Bubble.XL){
+                score += 50;
+               }else if(bubble.size == Bubble.L){
+                score += 100;
+               }else if(bubble.size == Bubble.M){
+                score += 150;
+               }else{
+                score += 200;
+               }
                Bubble[] newBubbles = bubble.split();
                iterator.remove(); // Remove the hit bubble
                
@@ -179,9 +219,31 @@ public class CharacterGUI extends JPanel implements Runnable {
                 cycleShootAnimation(rect);
             }
             
-            // Update all bubbles
             for (Bubble bubble : bubbles) {
                 bubble.update();
+                if(!bubble.isActive){
+                    bubbles.remove(bubble);
+                }
+
+                if(bubble.checkCharacterCollision(new Rectangle(characterX, characterY, characterWidth, characterHeight)) && !isNowTouched){
+                        characterLives--;
+                        isNowTouched = true;
+                    if(characterLives == 0){
+                        ((FrameGUI) SwingUtilities.getWindowAncestor(CharacterGUI.this)).endGame();
+                    }
+                }
+                if(bubble.checkCharacterCollision(new Rectangle(characterX, characterY, characterWidth, characterHeight)) && isNowTouched){
+                    isNowTouched = false;
+                }
+            }
+
+            int activeBubbleCnt = 0;
+            for (Bubble bubble : bubbles){
+                if(bubble.isActive) activeBubbleCnt++;
+            }
+            if(activeBubbleCnt == 0){
+                isWin = true;
+                ((FrameGUI) SwingUtilities.getWindowAncestor(CharacterGUI.this)).endGame();
             }
             
             SwingUtilities.invokeLater(() -> repaint()); //  this is a bit long to explain but if I got it right it is something like: OK, the job of this thread is done and we have to tell swing to repaint but it is on edt so it tells edt to repaint.
@@ -200,15 +262,12 @@ public class CharacterGUI extends JPanel implements Runnable {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
 
-        int characterWidth = AssetBank.getCharacterImages()[currentChFrame].getWidth() * 3; // taking width and heights of character to draw 
-        int characterHeight = AssetBank.getCharacterImages()[currentChFrame].getHeight() * 3;
-
         int arrowWidth = AssetBank.getArrowImages()[currentArrowFrame].getWidth() * 3;
         int arrowHeight = AssetBank.getArrowImages()[currentArrowFrame].getHeight() * 3;
         
         g.drawImage(AssetBank.getForegroundImage(), 0, 0,getWidth(), getHeight(), null); // draw to foreground without any condition
         
-        // Draw all bubbles
+        // draw each bubble
         for (Bubble bubble : bubbles) {
             bubble.draw(g);
         }
@@ -221,15 +280,5 @@ public class CharacterGUI extends JPanel implements Runnable {
         }else{
              g.drawImage(AssetBank.getCharacterImages()[currentChFrame], characterX, characterY, characterWidth, characterHeight, null);
         }
-        // g.setColor(Color.MAGENTA);
-        // //Rectangle wall = new Rectangle(184 * 3, 48 * 3, 16 * 3, 40 * 3);
-        // g.drawRect(184 * 3, 48 * 3, 16 * 3, 40 * 3);
-        // g.drawRect(184 * 3, 128 * 3, 16 * 3, 40 * 3);
-        // g.drawRect(64 * 3, 96 * 3, 64 * 3, 16 * 3);
-        // g.drawRect((128 + 128) * 3, 96 * 3, 64 * 3, 16 * 3);
-        // g.drawRect(8 * 3, 8 * 3, 368 * 3, 192 * 3);
-        // //g.fillRect(characterWidth, characterHeight, arrowWidth, arrowHeight);
-        // // BELOW WILL BE DELETED BEFORE COMPILE
-        // g.drawArc(arrowHeight, arrowHeight, characterWidth, characterHeight, arrowWidth, arrowHeight); // THIS WILL BE DELETED BEFORE COMPILE 
     }
 }

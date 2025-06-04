@@ -10,23 +10,23 @@ public class Bubble {
     public static final int M = 2;
     public static final int S = 3;
 
-    private static final int[] bubble_radius = {24, 16, 8, 4};
-    private static final int[] base_speedsY = {5, 4, 3, 2};
+    public static final int[] bubble_radius = {24, 16, 8, 4};
+    public static final int[] base_speedsY = {20, 20, 20, 20};
     public boolean isActive;
 
-    private int bubbleX;
-    private int bubbleY;
-    private int speedX;
-    private int speedY;
-    private int size;
+    public int bubbleX;
+    public int bubbleY;
+    public int speedX = 30;
+    public int speedY;
+    public int size;
 
     public CollisionDetector cDetector = new CollisionDetector();
 
 
-    public Bubble(int x, int y, int speedX, int speedY, int size){
+    public Bubble(int x, int y, double xSpeedMultiplier, int speedY, int size){
         this.bubbleX = x;
         this.bubbleY = y;
-        this.speedX = speedX;
+        this.speedX = (int)(5 * xSpeedMultiplier);
         this.speedY = speedY;
         this.size = size;
 
@@ -36,24 +36,68 @@ public class Bubble {
     public void update() {
         if (!isActive) return;
 
+        // Apply gravity
+        //speedY += 1; // Add gravity acceleration
+        
         bubbleX += speedX;
         bubbleY += speedY;
 
+        // Check screen boundaries first
+        checkScreenBoundaries();
+        
+        // Then check wall collisions
         checkWallCollisions();
     }
 
+    private void checkScreenBoundaries() {
+        int radius = AssetBank.getBubbleImages()[size].getWidth()/ 2;
+        
+        // Left boundary
+        if (bubbleX <= 24) {
+            bubbleX = 24 + radius;
+            speedX = -speedX;
+        }
+        
+        // Right boundary  
+        if (bubbleX + radius >= 1080) {
+            bubbleX = 1080 - radius;
+            speedX = -speedX;
+        }
+        
+        // Ground boundary
+        if (bubbleY + radius >= 590) {
+            bubbleY = 590 - radius;
+            speedY = -Math.abs(speedY); // Bounce up
+        }
+        
+        // Ceiling boundary
+        if (bubbleY <= 24) {
+            bubbleY = 24 + radius;
+            speedY = Math.abs(speedY);
+        }
+    }
+
     public boolean checkWallCollisions(){
-        if (cDetector.isCircleCollidingWithWalls(bubbleX, bubbleY, bubble_radius[size] * 3)){
+        BufferedImage[] bubbleImages = AssetBank.getBubbleImages();
+        int imageWidth = bubbleImages[size].getWidth() * 3;
+        int imageHeight = bubbleImages[size].getHeight() * 3;
+        
+        // Calculate actual center of the bubble image
+        int centerX = bubbleX + (imageWidth / 2);
+        int centerY = bubbleY + (imageHeight / 2);
+        
+        // Pass the center coordinates, not center + radius
+        if (cDetector.isCircleCollidingWithWalls(centerX, centerY, bubble_radius[size] * 3)){
             speedX = -speedX;
             speedY = -speedY;
-
-            bubbleX += speedX * 2;
-            bubbleY += speedY * 2;
-
+            
+            // Move bubble away from wall
+            bubbleX += speedX;
+            bubbleY += speedY;
+            
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
     
     public void draw(Graphics g){
@@ -69,11 +113,21 @@ public class Bubble {
     public boolean checkArrowCollision(Rectangle arrow){
         if (!isActive) return false;
 
-        return cDetector.isRectCollidingWithCircle(arrow, bubbleX, bubbleY, bubble_radius[size] * 3);
+        // Get the actual drawn image dimensions
+        BufferedImage[] bubbleImages = AssetBank.getBubbleImages();
+        int imageWidth = bubbleImages[size].getWidth() * 3;
+        int imageHeight = bubbleImages[size].getHeight() * 3;
+        
+        // Calculate center based on image position + half image size
+        int centerX = bubbleX + (imageWidth / 2);
+        int centerY = bubbleY + (imageHeight / 2);
+        
+        return cDetector.isRectCollidingWithCircle(arrow, centerX, centerY, bubble_radius[size] * 3);
     }
 
     public Bubble[] split(){
         if(!isActive || size >= S){
+            isActive = false;
             return new Bubble[0];
         }
 
@@ -82,8 +136,9 @@ public class Bubble {
         int newSize = size + 1;
         Bubble[] newBubbles = new Bubble[2];
 
-        newBubbles[0] = new Bubble(bubbleX - 20, bubbleY, -speedX, base_speedsY[newSize], newSize);
-        newBubbles[1] = new Bubble(bubbleX + 20, bubbleY, speedX, base_speedsY[newSize], newSize);
+        // Create bubbles moving in opposite directions
+        newBubbles[0] = new Bubble(bubbleX - 30, bubbleY, -1.0, -base_speedsY[newSize], newSize);
+        newBubbles[1] = new Bubble(bubbleX + 30, bubbleY, 1.0, -base_speedsY[newSize], newSize);
 
         return newBubbles;
     }

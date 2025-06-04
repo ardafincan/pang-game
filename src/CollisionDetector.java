@@ -67,14 +67,17 @@ public class CollisionDetector {
     // this one is checking if a circle is colliding with walls
     public boolean isCircleCollidingWithWalls(int x, int y, int radius){
         
-        Circle circ = new Circle(x + radius, y + radius, radius); // creating a circle to compute which points to look
+        Circle circ = new Circle(x, y, radius); // creating a circle to compute which points to look
         Point[] pts = circ.circlePoints; // creating an array of points 
 
         // checking each point to look if they collide
         for (Point p : pts){
-            if (isPointCollidingWithWalls(p)) return true;
+            if (isPointCollidingWithWalls(p)) {
+                System.out.println("collision var");
+                return true;
+            }
         }
-
+        System.out.println("col yok");
         return false;
     }
 
@@ -112,11 +115,15 @@ public class CollisionDetector {
             this.y = y;
             this.radius = radius;
 
-            // assigning 100 points as boundaries of circle
+            // assigning 360 points as boundaries of circle
             for(int i = 0; i < pointCount; i++){
-                double angle = Math.toRadians(((double) i / pointCount) * 360d); // calculating the angle which will be used in computing
-
-                circlePoints[i] = new Point(Math.cos(angle) * radius, Math.sin(angle) * radius); // assigning pts
+                double angle = Math.toRadians(((double) i / pointCount) * 360d);
+                
+                // Add the center coordinates (x, y) to the calculated points
+                circlePoints[i] = new Point(
+                    x + Math.cos(angle) * radius, 
+                    y + Math.sin(angle) * radius
+                );
             }
         }
     }

@@ -1,9 +1,12 @@
 package src;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -25,6 +28,8 @@ public class CharacterGUI extends JPanel implements Runnable {
     private volatile boolean movingRight = false; // I explained at above line
     private volatile boolean shooting = false;
 
+    private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();
+
     private CollisionDetector cDetector = new CollisionDetector();
     private Thread movementThread; // declaring the thread for handling character movement
 
@@ -32,6 +37,11 @@ public class CharacterGUI extends JPanel implements Runnable {
     public CharacterGUI(){
         setOpaque(false); // setting transparent to make background transparent obviously
         setPreferredSize(new Dimension(AssetBank.getForegroundImage().getWidth() * 3, AssetBank.getForegroundImage().getHeight() * 3)); // setting preferred size according to foreground image
+
+        // Initialize bubbles
+        for (Bubble bubble : BubbleFactory.initializeBubbles(1)){
+            bubbles.add(bubble);
+        }
 
         // below are key bindings, I use them to catch keyEvents, can't use keyListeners because this JPanel is too deeply nested for keyListeners
         // this one is to move character to left when pressed left arrow
@@ -75,7 +85,10 @@ public class CharacterGUI extends JPanel implements Runnable {
         this.getActionMap().put("shoot", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e){
-                shooting = true;        
+                if(!shooting){
+                    shootedX = characterX;
+                    shooting = true;
+                }        
             }
         });
 
@@ -104,6 +117,10 @@ public class CharacterGUI extends JPanel implements Runnable {
                 currentArrowFrame = 0;
                 return;
             }
+            
+            // Check collision with bubbles
+            checkArrowBubbleCollision(rect);
+            
             currentArrowFrame += 3; // increasing 3 by 3 in order to make it faster without changing thread sleep
             if(currentArrowFrame == 23 || currentArrowFrame == 47){ // these frames are blank
                 currentArrowFrame++;
@@ -112,6 +129,28 @@ public class CharacterGUI extends JPanel implements Runnable {
             shooting = false;
             currentArrowFrame = 0;
         }
+   }
+   
+   private void checkArrowBubbleCollision(Rectangle arrowRect) {
+       Iterator<Bubble> iterator = bubbles.iterator();
+       while (iterator.hasNext()) {
+           Bubble bubble = iterator.next();
+           if (bubble.isActive() && bubble.checkArrowCollision(arrowRect)) {
+               // Bubble hit! Split it
+               Bubble[] newBubbles = bubble.split();
+               iterator.remove(); // Remove the hit bubble
+               
+               // Add new bubbles if any
+               for (Bubble newBubble : newBubbles) {
+                   bubbles.add(newBubble);
+               }
+               
+               // Stop shooting
+               currentArrowFrame = 0;
+               shooting = false;
+               break; // Only hit one bubble per arrow
+           }
+       }
    }
 
     // below is what movementThread will do when it started running
@@ -136,11 +175,15 @@ public class CharacterGUI extends JPanel implements Runnable {
                 int arrowWidth = AssetBank.getArrowImages()[currentArrowFrame].getWidth() * 3;
                 int arrowHeight = AssetBank.getArrowImages()[currentArrowFrame].getHeight() * 3;
                 
-                shootedX = currentArrowFrame == 0 ? characterX : shootedX;
-
                 Rectangle rect = new Rectangle(shootedX + (characterWidth/2), characterY - arrowHeight + characterHeight, arrowWidth, arrowHeight);
                 cycleShootAnimation(rect);
             }
+            
+            // Update all bubbles
+            for (Bubble bubble : bubbles) {
+                bubble.update();
+            }
+            
             SwingUtilities.invokeLater(() -> repaint()); //  this is a bit long to explain but if I got it right it is something like: OK, the job of this thread is done and we have to tell swing to repaint but it is on edt so it tells edt to repaint.
             try{
                 Thread.sleep(50); // sleep 75 ms so it doesnt seem like in light speed
@@ -163,9 +206,13 @@ public class CharacterGUI extends JPanel implements Runnable {
         int arrowWidth = AssetBank.getArrowImages()[currentArrowFrame].getWidth() * 3;
         int arrowHeight = AssetBank.getArrowImages()[currentArrowFrame].getHeight() * 3;
         
-        shootedX = currentArrowFrame == 0 ? characterX : shootedX;
-
         g.drawImage(AssetBank.getForegroundImage(), 0, 0,getWidth(), getHeight(), null); // draw to foreground without any condition
+        
+        // Draw all bubbles
+        for (Bubble bubble : bubbles) {
+            bubble.draw(g);
+        }
+        
         if(shooting){
             g.drawImage(AssetBank.getArrowImages()[currentArrowFrame], shootedX + (characterWidth/2), characterY - arrowHeight + characterHeight, arrowWidth, arrowHeight, null);
         }

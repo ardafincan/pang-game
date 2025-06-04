@@ -1,6 +1,5 @@
 package src;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -20,7 +19,6 @@ public class CharacterGUI extends JPanel implements Runnable {
     private int currentChFrame = 0; // this is for character walking animation (0 is idle)
     private int totalChFrames = 5;  // how many frames there are in total
     private int currentArrowFrame = 0; // this is for shooting animation
-    private int totalArrFrames = 72; // how many frames? again
 
     private boolean isLastLeft = false; // this is kept for declaring if idle state will look either left or right
     private volatile boolean movingLeft = false; // this and below are kept to move character at thread run method

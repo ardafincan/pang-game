@@ -65,11 +65,9 @@ public class CollisionDetector {
     }
 
     // this one is checking if a circle is colliding with walls
-    public boolean isCircleCollidingWithWalls(Point center, int radius){
-        int x = center.x;
-        int y = center.y;
+    public boolean isCircleCollidingWithWalls(int x, int y, int radius){
         
-        Circle circ = new Circle(x, y, radius); // creating a circle to compute which points to look
+        Circle circ = new Circle(x + radius, y + radius, radius); // creating a circle to compute which points to look
         Point[] pts = circ.circlePoints; // creating an array of points 
 
         // checking each point to look if they collide
